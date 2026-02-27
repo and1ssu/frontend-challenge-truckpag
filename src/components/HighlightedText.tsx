@@ -24,7 +24,7 @@ export function HighlightedText({ text, query, enabled }: HighlightedTextProps) 
         }
 
         return (
-          <mark key={`${part}-${index}`} className="rounded bg-yellow-200 px-1 text-stone-900">
+          <mark key={`${part}-${index}`} className="rounded bg-[#e50914] px-1 text-white">
             {part}
           </mark>
         );

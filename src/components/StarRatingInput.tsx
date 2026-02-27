@@ -16,7 +16,7 @@ export function StarRatingInput({ value, onChange }: StarRatingInputProps) {
             role="radio"
             aria-checked={active}
             className={`text-xl transition hover:scale-110 ${
-              active ? 'text-amber-400' : 'text-slate-400'
+              active ? 'text-[#e50914]' : 'text-zinc-500'
             }`}
             onClick={() => onChange(star)}
             title={`${star} estrela${star > 1 ? 's' : ''}`}

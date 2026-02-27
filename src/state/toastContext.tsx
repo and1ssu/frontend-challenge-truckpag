@@ -45,7 +45,7 @@ export function ToastProvider({ children }: PropsWithChildren) {
           <div
             key={toast.id}
             role="status"
-            className="rounded-xl border border-emerald-400/40 bg-emerald-100/90 px-4 py-2 text-sm font-medium text-emerald-950 shadow-lg backdrop-blur"
+            className="rounded-lg border border-[#e50914]/70 bg-[#1f1f1f]/95 px-4 py-2 text-sm font-semibold text-zinc-100 shadow-lg backdrop-blur"
           >
             {toast.message}
           </div>

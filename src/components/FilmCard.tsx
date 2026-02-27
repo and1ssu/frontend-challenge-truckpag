@@ -34,94 +34,103 @@ export function FilmCard({
   }, [meta.note, meta.personalRating]);
 
   return (
-    <article className="film-card overflow-hidden rounded-2xl border border-white/20 bg-slate-900/80 shadow-glow backdrop-blur-sm">
-      <img
-        src={film.image}
-        alt={`Pôster de ${film.title}`}
-        className="h-72 w-full object-cover object-center md:h-80"
-      />
+    <article className="film-card group min-w-[290px] max-w-[300px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#1a1a1a] transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-white/30 hover:shadow-[0_18px_35px_rgba(0,0,0,0.45)]">
+      <div className="relative h-44 w-full overflow-hidden">
+        <img
+          src={film.image}
+          alt={`Pôster de ${film.title}`}
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        />
 
-      <div className="space-y-4 p-5">
-        <header className="space-y-2">
-          <h2 className="font-display text-2xl font-bold leading-tight text-white">{film.title}</h2>
-          <p className="text-sm text-slate-300">
-            {film.release_date} • {film.running_time} min
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+
+        <div className="absolute bottom-0 left-0 right-0 space-y-1 p-3">
+          <h3 className="font-body text-lg font-bold leading-tight text-white">{film.title}</h3>
+          <p className="text-xs text-zinc-300">
+            {film.release_date} • {film.running_time} min • rt {film.rt_score}
           </p>
-          <p className="text-sm text-emerald-200">
-            Diretor: <span className="font-semibold">{film.director}</span> | Produtor:{' '}
-            <span className="font-semibold">{film.producer}</span>
-          </p>
-        </header>
-
-        <p className="text-sm leading-relaxed text-slate-200">
-          <HighlightedText text={film.description} query={searchTerm} enabled={includeSynopsis} />
-        </p>
-
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="rounded-full bg-white/10 px-3 py-1 text-slate-100">rt_score: {film.rt_score}</span>
-          <span className="rounded-full bg-white/10 px-3 py-1 text-slate-100">
-            Sua nota: {meta.personalRating > 0 ? `${meta.personalRating}/5` : 'Não avaliado'}
-          </span>
         </div>
+      </div>
 
+      <div className="space-y-3 p-3">
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={onToggleWatched}
-            className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+            className={`rounded px-3 py-1 text-xs font-semibold transition ${
               meta.watched
-                ? 'bg-emerald-500 text-white hover:bg-emerald-400'
-                : 'bg-slate-700 text-slate-100 hover:bg-slate-600'
+                ? 'bg-zinc-100 text-zinc-900 hover:bg-white'
+                : 'bg-zinc-700 text-white hover:bg-zinc-600'
             }`}
           >
-            {meta.watched ? 'Assistido' : 'Marcar como assistido'}
+            {meta.watched ? 'Assistido' : 'Marcar assistido'}
           </button>
 
           <button
             type="button"
             onClick={onToggleFavorite}
-            className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+            className={`rounded px-3 py-1 text-xs font-semibold transition ${
               meta.favorite
-                ? 'bg-amber-500 text-slate-900 hover:bg-amber-400'
-                : 'bg-slate-700 text-slate-100 hover:bg-slate-600'
+                ? 'bg-[#e50914] text-white hover:bg-[#f6121d]'
+                : 'bg-zinc-700 text-white hover:bg-zinc-600'
             }`}
           >
-            {meta.favorite ? 'Favorito ★' : 'Favoritar'}
+            {meta.favorite ? 'Na Minha Lista' : 'Adicionar à Lista'}
           </button>
         </div>
 
-        <div className="space-y-3 rounded-xl border border-white/10 bg-black/20 p-3">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Anotações</h3>
-          <textarea
-            value={noteDraft}
-            onChange={(event) => setNoteDraft(event.target.value)}
-            className="h-24 w-full rounded-lg border border-white/20 bg-slate-950/80 p-3 text-sm text-slate-100 outline-none transition focus:border-emerald-300"
-            placeholder="Anote seus pensamentos sobre o filme..."
-          />
+        <p className="max-h-14 overflow-hidden text-xs leading-relaxed text-zinc-300">
+          <HighlightedText text={film.description} query={searchTerm} enabled={includeSynopsis} />
+        </p>
 
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <StarRatingInput value={ratingDraft} onChange={setRatingDraft} />
+        <details className="rounded-lg border border-white/10 bg-black/25 p-2">
+          <summary className="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-zinc-200">
+            Detalhes e anotação
+          </summary>
+
+          <div className="mt-3 space-y-3 border-t border-white/10 pt-3">
+            <p className="text-xs text-zinc-400">
+              Diretor: <span className="text-zinc-200">{film.director}</span> | Produtor:{' '}
+              <span className="text-zinc-200">{film.producer}</span>
+            </p>
+
+            <p className="text-xs leading-relaxed text-zinc-300">
+              <HighlightedText text={film.description} query={searchTerm} enabled={includeSynopsis} />
+            </p>
+
+            <textarea
+              value={noteDraft}
+              onChange={(event) => setNoteDraft(event.target.value)}
+              className="h-20 w-full rounded border border-white/15 bg-[#101010] p-2 text-xs text-zinc-100 outline-none transition focus:border-[#e50914]"
+              placeholder="Escreva sua anotação sobre o filme"
+            />
+
+            <div className="space-y-2">
+              <p className="text-xs text-zinc-300">
+                Sua nota: {meta.personalRating > 0 ? `${meta.personalRating}/5` : 'não avaliado'}
+              </p>
+              <StarRatingInput value={ratingDraft} onChange={setRatingDraft} />
+            </div>
 
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => onSaveNote(noteDraft, ratingDraft)}
-                className="rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-400"
+                className="rounded bg-[#e50914] px-3 py-1 text-xs font-semibold text-white transition hover:bg-[#f6121d]"
               >
-                Salvar anotação
+                Salvar
               </button>
-
               <button
                 type="button"
                 onClick={onRemoveNote}
                 disabled={!hasAnyNoteContent}
-                className="rounded-lg bg-rose-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-rose-400 disabled:cursor-not-allowed disabled:bg-rose-900/70 disabled:text-rose-200"
+                className="rounded bg-zinc-700 px-3 py-1 text-xs font-semibold text-white transition hover:bg-zinc-600 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
               >
                 Remover
               </button>
             </div>
           </div>
-        </div>
+        </details>
       </div>
     </article>
   );

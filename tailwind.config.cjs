@@ -4,11 +4,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Space Grotesk"', 'sans-serif'],
-        body: ['"Manrope"', 'sans-serif']
+        display: ['"Bebas Neue"', 'sans-serif'],
+        body: ['"Nunito Sans"', 'sans-serif']
       },
       boxShadow: {
-        glow: '0 12px 35px rgba(4, 120, 87, 0.22)'
+        glow: '0 16px 32px rgba(229, 9, 20, 0.24)'
       }
     }
   },
