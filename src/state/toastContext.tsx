@@ -36,10 +36,15 @@ export function ToastProvider({ children }: PropsWithChildren) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="pointer-events-none fixed right-4 top-4 z-50 flex w-72 flex-col gap-2">
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="pointer-events-none fixed right-4 top-4 z-50 flex w-72 flex-col gap-2"
+      >
         {toasts.map((toast) => (
           <div
             key={toast.id}
+            role="status"
             className="rounded-xl border border-emerald-400/40 bg-emerald-100/90 px-4 py-2 text-sm font-medium text-emerald-950 shadow-lg backdrop-blur"
           >
             {toast.message}

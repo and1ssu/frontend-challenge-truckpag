@@ -26,6 +26,7 @@ export function FilmCard({
 }: FilmCardProps) {
   const [noteDraft, setNoteDraft] = useState(meta.note);
   const [ratingDraft, setRatingDraft] = useState(meta.personalRating);
+  const hasAnyNoteContent = noteDraft.trim().length > 0 || ratingDraft > 0;
 
   useEffect(() => {
     setNoteDraft(meta.note);
@@ -113,7 +114,8 @@ export function FilmCard({
               <button
                 type="button"
                 onClick={onRemoveNote}
-                className="rounded-lg bg-rose-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-rose-400"
+                disabled={!hasAnyNoteContent}
+                className="rounded-lg bg-rose-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-rose-400 disabled:cursor-not-allowed disabled:bg-rose-900/70 disabled:text-rose-200"
               >
                 Remover
               </button>

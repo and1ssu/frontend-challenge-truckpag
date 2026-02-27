@@ -10,7 +10,9 @@ Aplicação React + TypeScript que consome a API pública do Studio Ghibli e per
 - GSAP (animações)
 - TanStack Query (estado assíncrono e cache)
 - Context API + Reducer (estado global de interações do usuário)
-- Vitest (teste unitário)
+- Vitest + Testing Library (testes unitários)
+- ESLint (qualidade estática)
+- GitHub Actions (CI)
 
 ## Instalação e execução
 
@@ -32,6 +34,12 @@ npm run preview
 
 ```bash
 npm run test
+```
+
+## Rodar lint
+
+```bash
+npm run lint
 ```
 
 ## Requisitos implementados
@@ -59,6 +67,7 @@ npm run test
 - [x] Biblioteca de estilo (Tailwind CSS)
 - [x] Context API para estado global
 - [x] TanStack Query para estado assíncrono
+- [x] Pipeline de CI (lint + test + build)
 
 ## Estrutura resumida
 
@@ -68,6 +77,7 @@ npm run test
 - `src/hooks`: hooks reutilizáveis
 - `src/utils`: filtros/ordenação e utilitários de texto
 - `src/tests`: testes unitários
+- `.github/workflows/ci.yml`: validação automática no GitHub
 
 ## Decisões de implementação
 
