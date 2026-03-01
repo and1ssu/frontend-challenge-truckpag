@@ -1,13 +1,30 @@
+import { useState, useRef } from 'react';
 import type { AppFilters, SortState } from '../types/film';
 
 interface FiltersPanelProps {
   filters: AppFilters;
   sort: SortState;
+  filmTitles: string[];
   onFiltersChange: (updater: (previous: AppFilters) => AppFilters) => void;
   onSortChange: (value: SortState) => void;
 }
 
-export function FiltersPanel({ filters, sort, onFiltersChange, onSortChange }: FiltersPanelProps) {
+export function FiltersPanel({ filters, sort, filmTitles, onFiltersChange, onSortChange }: FiltersPanelProps) {
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const suggestions = filters.search.trim().length > 0
+    ? filmTitles
+        .filter((title) => title.toLowerCase().includes(filters.search.toLowerCase()))
+        .slice(0, 6)
+    : [];
+
+  function selectSuggestion(title: string) {
+    onFiltersChange((previous) => ({ ...previous, search: title }));
+    setShowSuggestions(false);
+    inputRef.current?.blur();
+  }
+
   return (
     <section className="rounded-xl border border-white/10 bg-[#181818] p-4 md:p-5">
       <div className="mb-3 flex items-center justify-between gap-3">
@@ -31,36 +48,46 @@ export function FiltersPanel({ filters, sort, onFiltersChange, onSortChange }: F
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <label className="space-y-1">
+        <div className="relative space-y-1">
           <span className="text-xs uppercase tracking-wide text-zinc-400">Buscar por título</span>
           <input
+            ref={inputRef}
             type="text"
             value={filters.search}
-            onChange={(event) =>
-              onFiltersChange((previous) => ({ ...previous, search: event.target.value }))
-            }
-            placeholder="Ex: spirited"
+            onChange={(event) => {
+              onFiltersChange((previous) => ({ ...previous, search: event.target.value }));
+              setShowSuggestions(true);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 120)}
+            placeholder="Ex: spirited away…"
             className="w-full rounded border border-white/15 bg-[#101010] px-3 py-2 text-sm text-zinc-100 outline-none transition focus:border-[#e50914]"
           />
-        </label>
-
-        <label className="space-y-1">
-          <span className="text-xs uppercase tracking-wide text-zinc-400">Filtrar por estrelas</span>
-          <select
-            value={filters.stars}
-            onChange={(event) =>
-              onFiltersChange((previous) => ({ ...previous, stars: Number(event.target.value) }))
-            }
-            className="w-full rounded border border-white/15 bg-[#101010] px-3 py-2 text-sm text-zinc-100 outline-none transition focus:border-[#e50914]"
-          >
-            <option value={0}>Todas</option>
-            <option value={1}>1 estrela</option>
-            <option value={2}>2 estrelas</option>
-            <option value={3}>3 estrelas</option>
-            <option value={4}>4 estrelas</option>
-            <option value={5}>5 estrelas</option>
-          </select>
-        </label>
+          {showSuggestions && suggestions.length > 0 && (
+            <ul className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-lg border border-white/10 bg-[#1f1f1f] shadow-2xl">
+              {suggestions.map((title) => {
+                const query = filters.search.toLowerCase();
+                const idx = title.toLowerCase().indexOf(query);
+                const before = title.slice(0, idx);
+                const match = title.slice(idx, idx + filters.search.length);
+                const after = title.slice(idx + filters.search.length);
+                return (
+                  <li key={title}>
+                    <button
+                      type="button"
+                      onMouseDown={() => selectSuggestion(title)}
+                      className="w-full px-3 py-2 text-left text-sm text-zinc-300 transition hover:bg-white/8 hover:text-white"
+                    >
+                      {before}
+                      <span className="text-[#e50914]">{match}</span>
+                      {after}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
 
         <label className="space-y-1">
           <span className="text-xs uppercase tracking-wide text-zinc-400">Ordenar por</span>
@@ -72,7 +99,7 @@ export function FiltersPanel({ filters, sort, onFiltersChange, onSortChange }: F
             <option value="title">Título</option>
             <option value="duration">Duração</option>
             <option value="personalRating">Avaliação pessoal</option>
-            <option value="rtScore">rt_score</option>
+            <option value="rtScore">Rotten Tomatoes</option>
           </select>
         </label>
 
@@ -87,6 +114,24 @@ export function FiltersPanel({ filters, sort, onFiltersChange, onSortChange }: F
           >
             <option value="asc">Crescente</option>
             <option value="desc">Decrescente</option>
+          </select>
+        </label>
+
+        <label className="space-y-1">
+          <span className="text-xs uppercase tracking-wide text-zinc-400">Avaliação pessoal</span>
+          <select
+            value={filters.stars}
+            onChange={(event) =>
+              onFiltersChange((previous) => ({ ...previous, stars: Number(event.target.value) }))
+            }
+            className="w-full rounded border border-white/15 bg-[#101010] px-3 py-2 text-sm text-zinc-100 outline-none transition focus:border-[#e50914]"
+          >
+            <option value={0}>Todas</option>
+            <option value={1}>★ 1 estrela</option>
+            <option value={2}>★★ 2 estrelas</option>
+            <option value={3}>★★★ 3 estrelas</option>
+            <option value={4}>★★★★ 4 estrelas</option>
+            <option value={5}>★★★★★ 5 estrelas</option>
           </select>
         </label>
       </div>
