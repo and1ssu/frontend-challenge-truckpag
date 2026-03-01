@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { Film, MovieMeta } from '../types/film';
 import { HighlightedText } from './HighlightedText';
-import { StarRatingInput } from './StarRatingInput';
+import { FilmDetailModal } from './FilmDetailModal';
 
 interface FilmCardProps {
   film: Film;
@@ -24,114 +24,93 @@ export function FilmCard({
   onSaveNote,
   onRemoveNote
 }: FilmCardProps) {
-  const [noteDraft, setNoteDraft] = useState(meta.note);
-  const [ratingDraft, setRatingDraft] = useState(meta.personalRating);
-  const hasAnyNoteContent = noteDraft.trim().length > 0 || ratingDraft > 0;
-
-  useEffect(() => {
-    setNoteDraft(meta.note);
-    setRatingDraft(meta.personalRating);
-  }, [meta.note, meta.personalRating]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <article className="film-card group min-w-[290px] max-w-[300px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#1a1a1a] transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-white/30 hover:shadow-[0_18px_35px_rgba(0,0,0,0.45)]">
-      <div className="relative h-44 w-full overflow-hidden">
-        <img
-          src={film.image}
-          alt={`Pôster de ${film.title}`}
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-        />
+    <>
+      <article className="film-card group relative min-w-[200px] max-w-[220px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#0f0f0f] transition duration-300 hover:-translate-y-2 hover:scale-[1.03] hover:border-white/30 hover:shadow-[0_24px_48px_rgba(0,0,0,0.65)]">
+        <div className="relative aspect-[2/3] w-full overflow-hidden">
+          <img
+            src={film.image}
+            alt={`Pôster de ${film.title}`}
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 right-0 space-y-1 p-3">
-          <h3 className="font-body text-lg font-bold leading-tight text-white">{film.title}</h3>
-          <p className="text-xs text-zinc-300">
-            {film.release_date} • {film.running_time} min • rt {film.rt_score}
-          </p>
-        </div>
-      </div>
-
-      <div className="space-y-3 p-3">
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={onToggleWatched}
-            className={`rounded px-3 py-1 text-xs font-semibold transition ${
-              meta.watched
-                ? 'bg-zinc-100 text-zinc-900 hover:bg-white'
-                : 'bg-zinc-700 text-white hover:bg-zinc-600'
-            }`}
-          >
-            {meta.watched ? 'Assistido' : 'Marcar assistido'}
-          </button>
-
-          <button
-            type="button"
-            onClick={onToggleFavorite}
-            className={`rounded px-3 py-1 text-xs font-semibold transition ${
-              meta.favorite
-                ? 'bg-[#e50914] text-white hover:bg-[#f6121d]'
-                : 'bg-zinc-700 text-white hover:bg-zinc-600'
-            }`}
-          >
-            {meta.favorite ? 'Na Minha Lista' : 'Adicionar à Lista'}
-          </button>
-        </div>
-
-        <p className="max-h-14 overflow-hidden text-xs leading-relaxed text-zinc-300">
-          <HighlightedText text={film.description} query={searchTerm} enabled={includeSynopsis} />
-        </p>
-
-        <details className="rounded-lg border border-white/10 bg-black/25 p-2">
-          <summary className="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-zinc-200">
-            Detalhes e anotação
-          </summary>
-
-          <div className="mt-3 space-y-3 border-t border-white/10 pt-3">
-            <p className="text-xs text-zinc-400">
-              Diretor: <span className="text-zinc-200">{film.director}</span> | Produtor:{' '}
-              <span className="text-zinc-200">{film.producer}</span>
-            </p>
-
-            <p className="text-xs leading-relaxed text-zinc-300">
-              <HighlightedText text={film.description} query={searchTerm} enabled={includeSynopsis} />
-            </p>
-
-            <textarea
-              value={noteDraft}
-              onChange={(event) => setNoteDraft(event.target.value)}
-              className="h-20 w-full rounded border border-white/15 bg-[#101010] p-2 text-xs text-zinc-100 outline-none transition focus:border-[#e50914]"
-              placeholder="Escreva sua anotação sobre o filme"
-            />
-
-            <div className="space-y-2">
-              <p className="text-xs text-zinc-300">
-                Sua nota: {meta.personalRating > 0 ? `${meta.personalRating}/5` : 'não avaliado'}
-              </p>
-              <StarRatingInput value={ratingDraft} onChange={setRatingDraft} />
+          <div className="group/badge absolute right-2.5 top-2.5 z-10">
+            <div className="cursor-help rounded bg-[#e50914] px-2 py-0.5 font-display text-sm tracking-wider text-white shadow-lg">
+              {film.rt_score}
             </div>
+            <div className="pointer-events-none absolute right-0 top-full mt-1.5 rounded border border-white/10 bg-zinc-900 px-2 py-1 text-[10px] whitespace-nowrap text-zinc-200 opacity-0 transition-opacity duration-200 group-hover/badge:opacity-100">
+              Rotten Tomatoes
+            </div>
+          </div>
 
-            <div className="flex gap-2">
+          <div className="absolute bottom-0 left-0 right-0 space-y-0.5 p-3 pb-4">
+            <h3 className="font-display text-lg leading-none tracking-wide text-white drop-shadow-lg">{film.title}</h3>
+            <p className="text-[10px] font-body tracking-widest uppercase text-zinc-400">
+              {film.release_date} • {film.running_time} min
+            </p>
+          </div>
+
+          <div className="absolute inset-x-0 bottom-0 translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0">
+            <div className="bg-gradient-to-t from-black via-black/97 to-transparent px-3 pb-3 pt-10 space-y-3">
+              <div className="flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  onClick={onToggleWatched}
+                  className={`rounded px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide transition ${
+                    meta.watched
+                      ? 'bg-zinc-100 text-zinc-900 hover:bg-white'
+                      : 'bg-white/15 text-white hover:bg-white/25 backdrop-blur-sm'
+                  }`}
+                >
+                  {meta.watched ? 'Assistido' : 'Marcar como assistido'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={onToggleFavorite}
+                  className={`rounded px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide transition ${
+                    meta.favorite
+                      ? 'bg-[#e50914] text-white hover:bg-[#f6121d]'
+                      : 'bg-white/15 text-white hover:bg-white/25 backdrop-blur-sm'
+                  }`}
+                >
+                  {meta.favorite ? 'Na Coleção' : 'Adicionar à Coleção'}
+                </button>
+              </div>
+
+              <p className="line-clamp-3 text-[10px] leading-relaxed text-zinc-300">
+                <HighlightedText text={film.description} query={searchTerm} enabled={includeSynopsis} />
+              </p>
+
               <button
                 type="button"
-                onClick={() => onSaveNote(noteDraft, ratingDraft)}
-                className="rounded bg-[#e50914] px-3 py-1 text-xs font-semibold text-white transition hover:bg-[#f6121d]"
+                onClick={() => setIsModalOpen(true)}
+                className="w-full rounded border border-white/15 bg-white/8 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-300 transition hover:bg-white/15 hover:text-white"
               >
-                Salvar
-              </button>
-              <button
-                type="button"
-                onClick={onRemoveNote}
-                disabled={!hasAnyNoteContent}
-                className="rounded bg-zinc-700 px-3 py-1 text-xs font-semibold text-white transition hover:bg-zinc-600 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
-              >
-                Remover
+                Ver detalhes e anotação
               </button>
             </div>
           </div>
-        </details>
-      </div>
-    </article>
+        </div>
+      </article>
+
+      {isModalOpen && (
+        <FilmDetailModal
+          film={film}
+          meta={meta}
+          searchTerm={searchTerm}
+          includeSynopsis={includeSynopsis}
+          onClose={() => setIsModalOpen(false)}
+          onToggleWatched={onToggleWatched}
+          onToggleFavorite={onToggleFavorite}
+          onSaveNote={onSaveNote}
+          onRemoveNote={onRemoveNote}
+        />
+      )}
+    </>
   );
 }
