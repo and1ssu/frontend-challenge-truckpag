@@ -8,7 +8,7 @@ export function useFilmPeople(urls: string[]) {
   const key = urls.join(',');
 
   useEffect(() => {
-    const validUrls = urls.filter((url) => typeof url === 'string' && url.startsWith('http'));
+    const validUrls = key.split(',').filter((url) => url.startsWith('http'));
 
     if (validUrls.length === 0) return;
 
